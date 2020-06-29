@@ -12,6 +12,17 @@ class Store_basket extends MX_Controller
         $mailPass = $this->db->get_where('settings' , array('type'=>'password'))->row()->description;
     }
 
+    function check_basket_blank($shopper, $item) {
+        $col1 = 'item_id';
+        $value1 = $item;
+        $col2 = 'shopper_id';
+        $value2 = $shopper;
+
+        $hasil = $this->get_with_double_condition($col1, $value1, $col2, $value2);
+        $num_rows = $hasil->num_rows();
+        return $hasil;
+    }
+
     public function num_exists($next_number) {
         $next_number = sprintf('%06d', $next_number);
         $records = $this->db->where('no_order', 'ORD'.$next_number)->get('store_orders')->num_rows();
@@ -524,9 +535,24 @@ class Store_basket extends MX_Controller
     function add_to_basket() {
         $this->load->module('site_security');
         $this->load->module('store_orders');
+        $this->load->module('manage_product');
         $this->site_security->_make_sure_logged_in();
 
         $user_id = $this->site_security->_get_user_id();
+        $item_id = $this->input->post('item_id');
+
+        // get item_url from item_id
+        $data_item = $this->manage_product->fetch_data_from_db($item_id);
+        $item_url = $data_item['item_url'];
+
+        // cek apakah sudah ada di keranjang
+        $result = $this->site_security->_make_sure_is_blank($item_id);
+
+        if (!$result) {
+            // end process and redirect to produk detail
+            redirect('product/billboard/'.$item_url);
+        }
+
         $submit = $this->input->post('submit', TRUE);
         if ($submit == "Submit") {
             $this->load->library('form_validation');
@@ -650,6 +676,7 @@ class Store_basket extends MX_Controller
         echo "You are shopper ID ".$shopper_id;
         echo "<hr>"; 
     }
+
 
     function get($order_by)
     {

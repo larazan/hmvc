@@ -352,13 +352,13 @@ ul#list-trans li {
 	font-weight: 700;
 }
 .Cell
-{
-    display: table-cell;
-    border: solid;
-    border-width: thin;
-    padding-left: 5px;
-    padding-right: 5px;
-}
+    {
+        display: table-cell;
+        border: solid;
+        border-width: thin;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
 article.box {
 	width: 950px !important;
 }
@@ -382,32 +382,39 @@ span.price {
 .konten-title span {
 	font-size: 16px;
 }
+
+.stay-color {
+	color: #01b7f2 !important;
+}
 /***************************************
 div table    
 ***************************************/
 .listing-style3 .box {
     box-shadow: 0 5px 20px 0 rgba(80,106,172,0.3);
 }
+
 .listing-style3.flight figure span img {
-    width: 380px !important;
+    *width: 380px !important;
     height: auto;
 }
+
+
 </style>
 
 <div class="tab-container style1">
 	<div class="konten-title"><h2>Transaksi <span>- Monitoring Titik Lokasi</span></h2></div>
         <ul class="tabs full-width" id="list-trans">
-            <li><a href="<?= base_url() ?>campaign" >Pembelian</a></li>
-            <li class="active"><a href="<?= base_url() ?>campaign/selling" >Penjualan</a></li>
+            <li class="active"><a href="<?= base_url() ?>transaction" >Pembelian</a></li>
+            <li><a href="<?= base_url() ?>transaction/selling" >Penjualan</a></li>
         </ul>
         <div class="tab-content">
-            
-            <div class="tab-pane fade in active" id="penjualan">
+            <div class="tab-pane fade in active" id="pembelian">
                 <!-- <h4>Check Complete Layouts</h4> -->
+                
                 <div class="col-lg-12 listing-style3 flight">
                 	<div class="row">
-                		
-	                    <?php
+
+                		<?php
 						$grand_total = 0;
 						$this->load->module('manage_product');
                         $this->load->module('store_categories');
@@ -423,7 +430,7 @@ div table
 							$prod = App::view_by_id($id);
 							$kategori_produk = $this->store_categories->get_name_from_category_id($prod->cat_prod);
 							$view_product = base_url()."product/billboard/".$prod->item_url;
-							$image_location = base_url().'marketplace/limapuluh/70x70/'.$prod->limapuluh;
+							$image_location = base_url().'marketplace/limapuluh/'.$prod->limapuluh;
 							$alamat = $prod->item_title;
 							$code = $prod->prod_code;
 							$prov = $this->store_provinces->get_name_from_province_id($prod->cat_prov);
@@ -443,7 +450,7 @@ div table
 
 	                    <article class="box">
 	                        <figure class="col-xs-3 col-sm-2">
-	                            <span><img alt="" src="<?= ($prod->limapuluh != '') ? $image_location : 'http://placehold.it/270x160' ?>"></span>
+	                            <div><img style="width: 100%;" alt="" src="<?= ($prod->limapuluh != '') ? $image_location : 'http://placehold.it/270x160' ?>"></div>
 	                            <div class="rel-category">
                                     <span class="label label-warning"><?= $kategori_produk ?></span>
                                 </div>
@@ -453,7 +460,7 @@ div table
 	                                <div class="first-row">
 	                                    <div class="col-sm-10">
 	                                    	<div class="col-sm-7">
-	                                    		<a href="<?= $view_product ?>"><h4 class="box-title item-title">
+	                                    		 <a href="<?= $view_product ?>"><h4 class="box-title item-title">
 												<?= $alamat ?>
 												<small style="color: #01b7f2;">#<?= $code ?></small>
 												</h4></a>
@@ -465,7 +472,7 @@ div table
 	                                        </div>
 	                                        
 	                                        <div class="amenities" style="margin-top: 10px;">
-	                                            <i class="soap-icon-wifi circle"></i>
+	                                            <i class="soap-icon-clock-1 circle stay-color"></i>
 	                                            <i class="soap-icon-entertainment circle"></i>
 	                                            <i class="soap-icon-fork circle"></i>
 	                                            <i class="soap-icon-suitcase circle"></i>
@@ -504,7 +511,7 @@ div table
 		                                </div>    
 		                                <div class="col-sm-2">
 		                                    <span style="padding: 5px;">
-		                                    	<a href="<?= base_url() ?>campaign/get_request/<?= $camp->id ?>" class="button btn-small green full-width">DETAIL</a>
+		                                    	<a href="<?= base_url() ?>transaction/purchase/<?= $camp->id ?>" class="button btn-small green full-width">DETAIL</a>
 		                                    </span>
 		                                </div>
 	                                   
@@ -517,15 +524,130 @@ div table
 
 	                    <!-- this for estimasi -->
 	                    <article class="box"></article>
-
                     </div>
                 </div>
+
             </div>
+            
            
         </div>
     </div>
 
+<!-- <div id="profile" class="tab-pane fade in active">
 
+	<section class="content">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				
+				<div class="table-container">
+					<table class="table table-filter">
+						<thead>
+							<tr>
+								<th class="lokasi">LOKASI</th>
+								<th>Durasi</th>
+								<th>Start - End</th>
+								<th>Status</th>
+								<th></th>
+								<th><i class="soap-icon-clock"></i></th>
+								<th>Harga</th>
+							</tr>
+						</thead>
+						<tbody>
+<?php
+	if ($campaign->num_rows() > 0) {
+		
+		$this->load->module('manage_product');
+		$this->load->module('store_categories');
+		$this->load->module('store_labels');
+		$this->load->module('store_sizes');
+		$this->load->module('store_roads');
+		$this->load->module('store_provinces');
+		$this->load->module('store_cities');
+		$this->load->module('site_settings');
+		foreach ($campaign->result() as $row) {
+			$camp = $this->manage_product->view_item_by_id($row->item_id);
+			$view_product = base_url()."product/billboard/".$camp->item_url;
+			$pic = $camp->limapuluh;
+			$lokasi = $row->item_title;
+			$ooh_code = $camp->prod_code;
+			$jenis = $this->store_categories->get_name_from_category_id($camp->cat_prod);
+			$durasi = $row->duration;
+			$start = $row->start;
+			$end = $row->end;
+			$status = '';
+			$waktu = $row->date_added;
+			$harga = $row->price; 
+			$nominal = substr(str_replace( ',', '', $harga), 0);
+        	$rupiah = number_format($nominal,0,',','.');
+?>
+							<tr>
+								<td class="lokasi">
+									<div>
+										<div class="img">
+											<img src="">
+										</div>
+										<div class="title">
+											<a href="<?= $view_product ?>">
+											<?= $lokasi ?></a>
+											<div class="code">#<?= $ooh_code ?></div>
+											<div class="tipe"><label class="label label-success" style="font-size: 12px !important;"><?= $jenis ?></label></div>
+										</div>
+									</div>
+								</td>
+								<td class="tengah">
+									<button class="ghost-btn btn-durasi btn-blue"><?= $durasi ?> bulan</button>
+								</td>
+								<td class="tengah">
+								
+								<?php 
+								$this->load->module('timedate');
+								echo '<span>'.$this->timedate->get_nice_date($start, 'indo').'</span>'.'<br><span>'.$this->timedate->get_nice_date($end, 'indo').'</span>';
+								?>
+								</td>
+								<td class="tengah">
+									<a href="<?= base_url() ?>campaign/get_request"><button class="ghost-btn btn-stat btn-green">success</button></a>
+								</td>
+								<td class="up-down">
+									<a href="#" title="download materi"><i class="fa fa-download"></i></a>
+								</td>
+								<td class="tengah">
+									<?php 
+									echo timeago($waktu);
+
+									?>
+								</td>
+								<td class="harga"><?= $rupiah ?></td>
+							</tr>
+											
+<?php
+		} 
+	} else {
+?>				
+
+<tr>
+	<td colspan="7">tidak ada data</td>
+</tr>
+
+<?php } ?>
+
+						</tbody>
+						<tfoot>
+							<tr>
+								<td><div class="flex">4 Lokasi</div></td>
+								<td><div class="flex"></div></td>
+								<td><div class="flex"></div></td>
+								<td><div class="flex"></div></td>
+								<td colspan="3" class="total">Rp. 3,2 Mily</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		
+	</section>
+</div> -->
 
 <script type="text/javascript">
 	tjq(document).ready(function () {

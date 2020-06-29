@@ -809,7 +809,7 @@ if($segment1 == 'blog' && $segment2 == 'view') {
                             $res = true;    
                         break;
 
-                        case 'campaign':
+                        case 'transaction':
                             $res = true;    
                         break;
 
@@ -856,7 +856,7 @@ if($segment1 == 'blog' && $segment2 == 'view') {
                                     <?php } ?>
                                 </a>
                             </li>
-                            <li class="<?= ($this->uri->segment(1) == 'campaign') ? 'active' : '' ?>"><a href="<?= base_url().'campaign'?>"><i class="soap-icon-shopping circle"></i>Transaksi</a></li>
+                            <li class="<?= ($this->uri->segment(1) == 'transaction') ? 'active' : '' ?>"><a href="<?= base_url().'transaction'?>"><i class="soap-icon-shopping circle"></i>Transaksi</a></li>
                             <li class="<?= ($this->uri->segment(1) == 'store_inbox') ? 'active' : '' ?>">
                                 <a href="<?= base_url().'store_inbox'?>">
                                     <i class="soap-icon-generalmessage circle"></i>Inbox<br>

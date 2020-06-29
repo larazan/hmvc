@@ -197,6 +197,7 @@ class Youraccount extends MX_Controller
     }
 
     function submit() {
+        $this->load->module('manage_daftar');
         $submit = $this->input->post('submit', TRUE);
         if ($submit == "Submit") {
             $this->load->library('form_validation');
@@ -205,8 +206,7 @@ class Youraccount extends MX_Controller
             $this->form_validation->set_rules('pword', 'Password', 'required|min_length[7]|max_length[35]');
             $this->form_validation->set_rules('repeat_pword', 'Repeat Password', 'required|matches[pword]');
 
-            if ($this->form_validation->run() == TRUE) {
-
+            if ($this->form_validation->run() == TRUE) {                
                 $this->_process_create_account();
                 // send mail confirmation
                 $this->send_mail_confirmation($this->input->post('email', true), $this->input->post('username', true));
@@ -216,11 +216,12 @@ class Youraccount extends MX_Controller
                 redirect('youraccount/login');
                 
             } else {
-                $flash_msg = "Email Anda sudah terdaftar, Silahkan masukkan email lain atau klik <a href='".base_url() ."youraccount/reset_password'>RESET PASSWORD</a> jika anda tidak ingat sandi anda!";
+                // $flash_msg = "Email Anda sudah terdaftar, Silahkan masukkan email lain atau klik <a href='".base_url() ."youraccount/reset_password'>RESET PASSWORD</a> jika anda tidak ingat sandi anda!";
+                $flash_msg = "Silahkan isi informasi yang dibutuhkan dengan benar";
                 $value = '<div class="alert alert-notice alert-dismissible show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>'.$flash_msg.'</div>';
                 $this->session->set_flashdata('item', $value);
-                redirect('youraccount/start');
-                // $this->start();
+                // redirect('youraccount/start');
+                $this->start();
             }
         }
 
@@ -488,6 +489,7 @@ class Youraccount extends MX_Controller
         $this->load->module('manage_daftar');
 
         if ($this->manage_daftar->email_exists($str)) {
+            $this->form_validation->set_message('username_check', 'Email Anda sudah terdaftar, Silahkan masukkan email lain');
             return FALSE;
         } else {
             return TRUE;
@@ -495,4 +497,25 @@ class Youraccount extends MX_Controller
 
     }
 
+    function check_email_avalibility() {
+        if (!filter_var($this->input->post('email'), FILTER_VALIDATE_EMAIL)) {
+            echo '<span class="text-bahaya"><span class="glyphicon glyphicon-remove"></span> Invalid Email</span>';
+        } else {
+            if ($this->is_email_available($this->input->post('email'))) {
+                echo "<span class='text-bahaya'><span class='glyphicon glyphicon-remove'></span> Email Anda sudah terdaftar, Silahkan masukkan email lain atau klik <a href='".base_url()."youraccount/reset_password'>RESET PASSWORD</a> jika anda tidak ingat sandi anda!</span>";
+            } else {
+                echo '<span class="text-success"><span class="glyphicon glyphicon-remove"></span> Email Available</span>';
+            }
+        }
+    }
+
+    function is_email_available($email) {
+        $this->db->where('email', $email);
+        $query = $this->db->get('kliens');
+        if ($query->num_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -711,6 +711,7 @@ function getData() {
         $data = $this->fetch_data_from_db($update_id);
         $id = $data['id'];
         $cat_id = $data['cat_prod'];
+        $city = $data['cat_city'];
         // get cat title
         $this->load->module('store_categories');
         $data['kategori'] = $this->store_categories->_get_cat_title($cat_id);
